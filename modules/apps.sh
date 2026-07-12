@@ -174,7 +174,12 @@ wat_apps_single_menu() {
             '0. 返回应用中心'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
-            1) wat_apps_require_docker && wat_apps_status_one "$app_id" || true; wat_pause ;;
+            1)
+                if wat_apps_require_docker; then
+                    wat_apps_status_one "$app_id" || true
+                fi
+                wat_pause
+                ;;
             2) wat_apps_deploy "$app_id" || true; wat_pause ;;
             3) wat_apps_action "$app_id" start '启动' || true; wat_pause ;;
             4) wat_apps_action "$app_id" stop '停止' || true; wat_pause ;;
