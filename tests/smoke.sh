@@ -5,8 +5,9 @@ PROJECT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 required_files=(
     README.md CHANGELOG.md .gitignore .gitattributes toolbox.sh install.sh uninstall.sh
     lib/common.sh lib/ui.sh modules/system.sh modules/packages.sh modules/time.sh
-    modules/swap.sh config/default.conf
+    modules/swap.sh modules/docker.sh config/default.conf
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
+    tests/docker_static.sh
 )
 
 failures=0
@@ -23,6 +24,10 @@ while IFS= read -r -d '' script; do
         failures=$((failures + 1))
     fi
 done < <(find "$PROJECT_DIR" -type f -name '*.sh' -print0)
+
+if ! bash "${PROJECT_DIR}/tests/docker_static.sh"; then
+    failures=$((failures + 1))
+fi
 
 if command -v shellcheck >/dev/null 2>&1; then
     mapfile -d '' scripts < <(find "$PROJECT_DIR" -type f -name '*.sh' -print0)

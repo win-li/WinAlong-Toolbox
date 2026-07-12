@@ -9,8 +9,10 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `modules/packages.sh`：Ubuntu/Debian 软件包更新检查与安装。
 - `modules/time.sh`：systemd 时间同步状态与启用操作。
 - `modules/swap.sh`：带输入验证、重复检测和失败清理的 Swap 创建。
+- `modules/docker.sh`：Docker 官方仓库安装、服务控制与只读资源查询。
 - `config/default.conf`：可提交的默认配置；本地覆盖使用 `config/local.conf`。
-- `tests/smoke.sh`：关键文件、Bash 语法与 ShellCheck 烟雾测试。
+- `tests/smoke.sh`：关键文件、Bash 语法、ShellCheck 与模块静态测试入口。
+- `tests/docker_static.sh`：验证 Docker 公共函数及禁止数据删除操作。
 
 ## 设计原则
 
@@ -20,3 +22,4 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 4. 运行日志与备份位于安装目录之外，卸载时默认保留。
 5. 当前支持目标为 Ubuntu 22.04、Ubuntu 24.04 和 Debian 12。
 6. 系统写操作必须要求 root 权限、明确确认并写入日志。
+7. Docker 模块不删除容器、镜像或数据卷，不开放端口，也不授予用户 Docker 特权。
