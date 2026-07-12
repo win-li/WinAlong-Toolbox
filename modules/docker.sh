@@ -170,6 +170,17 @@ wat_docker_disk_usage() {
     wat_log INFO '查看 Docker 磁盘占用'
 }
 
+wat_docker_compose_projects() {
+    wat_ui_title 'Docker Compose 项目'
+    wat_docker_require_client || return 1
+    if ! docker compose version >/dev/null 2>&1; then
+        wat_ui_error 'Docker Compose 插件尚未安装。'
+        return 1
+    fi
+    docker compose ls --all
+    wat_log INFO '查看 Docker Compose 项目'
+}
+
 wat_docker_menu() {
     local choice
     while true; do
@@ -185,6 +196,7 @@ wat_docker_menu() {
             '8. 查看所有容器' \
             '9. 查看镜像' \
             '10. 查看磁盘占用' \
+            '11. 查看 Compose 项目' \
             '0. 返回主菜单'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -198,6 +210,7 @@ wat_docker_menu() {
             8) wat_docker_list_containers || true; wat_pause ;;
             9) wat_docker_list_images || true; wat_pause ;;
             10) wat_docker_disk_usage || true; wat_pause ;;
+            11) wat_docker_compose_projects || true; wat_pause ;;
             0) return 0 ;;
             *) wat_ui_warn '无效选项，请重新输入。'; sleep 1 ;;
         esac

@@ -8,7 +8,7 @@ required_functions=(
     wat_docker_status wat_docker_versions wat_docker_install_engine
     wat_docker_install_compose wat_docker_service_action
     wat_docker_list_containers wat_docker_list_images wat_docker_disk_usage
-    wat_docker_menu
+    wat_docker_compose_projects wat_docker_menu
 )
 
 for function_name in "${required_functions[@]}"; do
