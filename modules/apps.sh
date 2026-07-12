@@ -47,6 +47,10 @@ wat_apps_config_valid() {
         wat_ui_error "${WAT_APP_NAME} 的容器名或数据卷名称无效。"
         return 1
     fi
+    if [[ ! $WAT_APPS_NETWORK =~ ^[a-zA-Z0-9][a-zA-Z0-9_.-]*$ ]]; then
+        wat_ui_error '应用网络名称无效。'
+        return 1
+    fi
 }
 
 wat_apps_require_docker() {
@@ -59,6 +63,64 @@ wat_apps_require_docker() {
 
 wat_apps_exists() {
     docker container inspect "$WAT_APP_CONTAINER" >/dev/null 2>&1
+}
+
+wat_apps_network_exists() {
+    docker network inspect "$WAT_APPS_NETWORK" >/dev/null 2>&1
+}
+
+wat_apps_network_ensure() {
+    if ! wat_apps_network_exists; then
+        docker network create --driver bridge "$WAT_APPS_NETWORK" >/dev/null
+        wat_log INFO "创建应用网络：${WAT_APPS_NETWORK}"
+    fi
+}
+
+wat_apps_container_on_network() {
+    local container=$1
+    docker container inspect --format \
+        '{{range $name, $_ := .NetworkSettings.Networks}}{{println $name}}{{end}}' \
+        "$container" | grep -Fxq -- "$WAT_APPS_NETWORK"
+}
+
+wat_apps_network_connect_existing() {
+    local app_id
+    wat_ui_title '配置应用专用网络'
+    wat_require_root || return 1
+    wat_apps_select nginx
+    wat_apps_config_valid || return 1
+    wat_apps_require_docker || return 1
+    if ! wat_confirm "确定创建 ${WAT_APPS_NETWORK} 并连接已部署应用吗？"; then
+        wat_ui_info '操作已取消。'
+        return 0
+    fi
+
+    wat_apps_network_ensure
+    for app_id in nginx uptime; do
+        wat_apps_select "$app_id"
+        if wat_apps_exists && ! wat_apps_container_on_network "$WAT_APP_CONTAINER"; then
+            docker network connect "$WAT_APPS_NETWORK" "$WAT_APP_CONTAINER"
+            wat_log INFO "应用接入网络：${WAT_APP_CONTAINER} ${WAT_APPS_NETWORK}"
+            wat_ui_success "${WAT_APP_NAME} 已连接应用网络。"
+        elif wat_apps_exists; then
+            wat_ui_info "${WAT_APP_NAME} 已在应用网络中。"
+        else
+            wat_ui_info "${WAT_APP_NAME} 尚未部署，已跳过。"
+        fi
+    done
+}
+
+wat_apps_network_status() {
+    wat_ui_title '应用专用网络状态'
+    wat_apps_require_docker || return 1
+    if ! wat_apps_network_exists; then
+        wat_ui_info "网络 ${WAT_APPS_NETWORK} 尚未创建。"
+        return 0
+    fi
+    docker network inspect "$WAT_APPS_NETWORK" --format \
+        '名称={{.Name}}  驱动={{.Driver}}  容器数={{len .Containers}}'
+    printf '\n%s\n' '同网络容器可以使用容器名互相访问。'
+    printf 'Uptime Kuma 监控 Nginx 的地址：http://%s\n' "$WAT_NGINX_CONTAINER"
 }
 
 wat_apps_status_one() {
@@ -98,11 +160,13 @@ wat_apps_deploy() {
     fi
 
     wat_log INFO "开始部署应用：${WAT_APP_NAME} ${WAT_APP_IMAGE}"
+    wat_apps_network_ensure
     docker volume create "$WAT_APP_VOLUME" >/dev/null
     docker pull "$WAT_APP_IMAGE"
     docker run -d \
         --name "$WAT_APP_CONTAINER" \
         --restart=unless-stopped \
+        --network "$WAT_APPS_NETWORK" \
         -p "${WAT_APPS_BIND}:${WAT_APP_PORT}:${WAT_APP_INTERNAL_PORT}" \
         -v "${WAT_APP_VOLUME}:${WAT_APP_VOLUME_TARGET}" \
         "$WAT_APP_IMAGE" >/dev/null

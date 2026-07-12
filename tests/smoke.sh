@@ -5,10 +5,11 @@ PROJECT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 required_files=(
     README.md CHANGELOG.md .gitignore .gitattributes toolbox.sh install.sh uninstall.sh
     lib/common.sh lib/ui.sh modules/system.sh modules/packages.sh modules/time.sh
-    modules/swap.sh modules/docker.sh modules/portainer.sh modules/apps.sh
+    modules/swap.sh modules/docker.sh modules/portainer.sh modules/apps.sh modules/backup.sh
     config/default.conf config/apps.conf
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
     tests/docker_static.sh tests/portainer_static.sh tests/apps_static.sh
+    tests/backup_static.sh
 )
 
 failures=0
@@ -33,6 +34,9 @@ if ! bash "${PROJECT_DIR}/tests/portainer_static.sh"; then
     failures=$((failures + 1))
 fi
 if ! bash "${PROJECT_DIR}/tests/apps_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/backup_static.sh"; then
     failures=$((failures + 1))
 fi
 

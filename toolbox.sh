@@ -31,6 +31,8 @@ fi
 . "${WAT_ROOT_DIR}/modules/portainer.sh"
 # shellcheck source=modules/apps.sh
 . "${WAT_ROOT_DIR}/modules/apps.sh"
+# shellcheck source=modules/backup.sh
+. "${WAT_ROOT_DIR}/modules/backup.sh"
 
 wat_main() {
     local choice
@@ -44,6 +46,7 @@ wat_main() {
             '2. Docker 管理' \
             '3. Portainer 管理' \
             '4. Docker 应用中心' \
+            '5. 应用网络与备份' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -51,6 +54,7 @@ wat_main() {
             2) wat_docker_menu ;;
             3) wat_portainer_menu ;;
             4) wat_apps_menu ;;
+            5) wat_backup_menu ;;
             0)
                 wat_log INFO '正常退出'
                 wat_ui_success '已退出。'
