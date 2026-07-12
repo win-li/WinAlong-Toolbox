@@ -9,6 +9,8 @@ readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 . "${WAT_ROOT_DIR}/config/default.conf"
 # shellcheck source=config/apps.conf
 . "${WAT_ROOT_DIR}/config/apps.conf"
+# shellcheck source=config/security.conf
+. "${WAT_ROOT_DIR}/config/security.conf"
 if [[ -r ${WAT_ROOT_DIR}/config/local.conf ]]; then
     # shellcheck source=/dev/null
     . "${WAT_ROOT_DIR}/config/local.conf"
@@ -33,6 +35,8 @@ fi
 . "${WAT_ROOT_DIR}/modules/apps.sh"
 # shellcheck source=modules/backup.sh
 . "${WAT_ROOT_DIR}/modules/backup.sh"
+# shellcheck source=modules/security.sh
+. "${WAT_ROOT_DIR}/modules/security.sh"
 
 wat_main() {
     local choice
@@ -47,6 +51,7 @@ wat_main() {
             '3. Portainer 管理' \
             '4. Docker 应用中心' \
             '5. 应用网络与备份' \
+            '6. 安全中心' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -55,6 +60,7 @@ wat_main() {
             3) wat_portainer_menu ;;
             4) wat_apps_menu ;;
             5) wat_backup_menu ;;
+            6) wat_security_menu ;;
             0)
                 wat_log INFO '正常退出'
                 wat_ui_success '已退出。'

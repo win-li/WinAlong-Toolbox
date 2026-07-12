@@ -25,6 +25,7 @@ if [[ $SOURCE_DIR != "$WAT_INSTALL_DIR" ]]; then
     mkdir -p "$WAT_INSTALL_DIR/config"
     cp -a -- "${SOURCE_DIR}/config/default.conf" "$WAT_INSTALL_DIR/config/default.conf"
     cp -a -- "${SOURCE_DIR}/config/apps.conf" "$WAT_INSTALL_DIR/config/apps.conf"
+    cp -a -- "${SOURCE_DIR}/config/security.conf" "$WAT_INSTALL_DIR/config/security.conf"
 fi
 
 chmod +x "$WAT_INSTALL_DIR/toolbox.sh" "$WAT_INSTALL_DIR/install.sh" \
