@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-WAT_ROOT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+WAT_ENTRYPOINT=$(readlink -f -- "${BASH_SOURCE[0]}")
+WAT_ROOT_DIR=$(cd -- "$(dirname -- "$WAT_ENTRYPOINT")" && pwd)
+readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 
 # shellcheck source=config/default.conf
 . "${WAT_ROOT_DIR}/config/default.conf"

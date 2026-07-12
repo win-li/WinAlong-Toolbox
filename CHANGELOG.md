@@ -14,3 +14,7 @@
 - 添加关键文件、Bash 语法和可选 ShellCheck 烟雾测试。
 - 添加 README、架构说明、忽略规则及运行数据占位目录。
 - 固定 Shell 等文本文件使用 LF 换行，便于在 Windows 开发、Linux 运行。
+
+### 修复
+
+- 修复通过 `/usr/local/bin/winalong` 软链接启动时无法定位配置文件的问题。
