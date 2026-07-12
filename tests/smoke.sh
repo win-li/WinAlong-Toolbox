@@ -17,7 +17,7 @@ for file in "${required_files[@]}"; do
 done
 
 while IFS= read -r -d '' script; do
-    printf 'bash -n: %s\n' "${script#${PROJECT_DIR}/}"
+    printf 'bash -n: %s\n' "${script#"${PROJECT_DIR}"/}"
     if ! bash -n "$script"; then
         failures=$((failures + 1))
     fi
