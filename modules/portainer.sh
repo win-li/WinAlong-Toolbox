@@ -117,6 +117,10 @@ wat_portainer_access_info() {
     printf '保持 SSH 窗口运行，然后浏览器打开：\nhttps://localhost:%s\n' \
         "$WAT_PORTAINER_PORT"
     wat_ui_info '首次访问会使用自签名证书，浏览器可能显示安全提醒。'
+    wat_ui_warn '首次管理员初始化需在容器启动后 5 分钟内完成。'
+    printf '%s\n' 'Setup token 可在 VPS 上通过以下命令查看：'
+    printf '%s\n' 'sudo docker logs --since 2m portainer 2>&1 | grep -i "token"'
+    wat_ui_warn 'Setup token 和管理员密码属于敏感信息，请勿截图或发送给他人。'
 }
 
 wat_portainer_menu() {

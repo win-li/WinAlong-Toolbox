@@ -7,6 +7,8 @@ readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 
 # shellcheck source=config/default.conf
 . "${WAT_ROOT_DIR}/config/default.conf"
+# shellcheck source=config/apps.conf
+. "${WAT_ROOT_DIR}/config/apps.conf"
 if [[ -r ${WAT_ROOT_DIR}/config/local.conf ]]; then
     # shellcheck source=/dev/null
     . "${WAT_ROOT_DIR}/config/local.conf"
@@ -27,6 +29,8 @@ fi
 . "${WAT_ROOT_DIR}/modules/docker.sh"
 # shellcheck source=modules/portainer.sh
 . "${WAT_ROOT_DIR}/modules/portainer.sh"
+# shellcheck source=modules/apps.sh
+. "${WAT_ROOT_DIR}/modules/apps.sh"
 
 wat_main() {
     local choice
@@ -39,12 +43,14 @@ wat_main() {
             '1. 系统管理' \
             '2. Docker 管理' \
             '3. Portainer 管理' \
+            '4. Docker 应用中心' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
             1) wat_system_menu ;;
             2) wat_docker_menu ;;
             3) wat_portainer_menu ;;
+            4) wat_apps_menu ;;
             0)
                 wat_log INFO '正常退出'
                 wat_ui_success '已退出。'
