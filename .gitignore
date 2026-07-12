@@ -1,0 +1,23 @@
+# Runtime data (keep directory placeholders)
+logs/*
+!logs/.gitkeep
+backup/*
+!backup/.gitkeep
+
+# Temporary and editor files
+*.tmp
+*.temp
+*.bak
+*.swp
+*~
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets and local configuration
+.env
+.env.*
+*.key
+*.pem
+config/local.conf
