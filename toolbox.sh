@@ -17,6 +17,12 @@ fi
 . "${WAT_ROOT_DIR}/lib/ui.sh"
 # shellcheck source=modules/system.sh
 . "${WAT_ROOT_DIR}/modules/system.sh"
+# shellcheck source=modules/packages.sh
+. "${WAT_ROOT_DIR}/modules/packages.sh"
+# shellcheck source=modules/time.sh
+. "${WAT_ROOT_DIR}/modules/time.sh"
+# shellcheck source=modules/swap.sh
+. "${WAT_ROOT_DIR}/modules/swap.sh"
 
 wat_main() {
     local choice
@@ -26,7 +32,7 @@ wat_main() {
     while true; do
         wat_ui_title
         wat_ui_menu \
-            '1. 系统检查' \
+            '1. 系统管理' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in

@@ -4,7 +4,8 @@ set -Eeuo pipefail
 PROJECT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 required_files=(
     README.md CHANGELOG.md .gitignore .gitattributes toolbox.sh install.sh uninstall.sh
-    lib/common.sh lib/ui.sh modules/system.sh config/default.conf
+    lib/common.sh lib/ui.sh modules/system.sh modules/packages.sh modules/time.sh
+    modules/swap.sh config/default.conf
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
 )
 

@@ -52,17 +52,27 @@ wat_system_swap_status() {
 wat_system_menu() {
     local choice
     while true; do
-        wat_ui_title '系统检查'
+        wat_ui_title '系统管理'
         wat_ui_menu \
             '1. 查看系统信息' \
             '2. 查看 BBR 状态' \
             '3. 查看 Swap 状态' \
+            '4. 检查软件包更新' \
+            '5. 安装软件包更新' \
+            '6. 查看时间同步状态' \
+            '7. 启用时间同步' \
+            '8. 创建 Swap' \
             '0. 返回主菜单'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
             1) wat_system_info; wat_pause ;;
             2) wat_system_bbr_status; wat_pause ;;
             3) wat_system_swap_status; wat_pause ;;
+            4) wat_packages_show_updates || true; wat_pause ;;
+            5) wat_packages_upgrade || true; wat_pause ;;
+            6) wat_time_status || true; wat_pause ;;
+            7) wat_time_enable_sync || true; wat_pause ;;
+            8) wat_swap_create || true; wat_pause ;;
             0) return 0 ;;
             *) wat_ui_warn '无效选项，请重新输入。'; sleep 1 ;;
         esac

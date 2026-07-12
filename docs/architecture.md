@@ -5,7 +5,10 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `toolbox.sh`：程序入口，仅加载配置、公共库和模块，并负责主菜单调度。
 - `lib/common.sh`：权限、交互确认、系统识别与日志等公共能力。
 - `lib/ui.sh`：统一的标题、菜单和消息输出。
-- `modules/`：按功能域组织业务逻辑；v0.1.0 仅提供只读系统检查。
+- `modules/system.sh`：系统信息、BBR、Swap 状态与系统管理菜单。
+- `modules/packages.sh`：Ubuntu/Debian 软件包更新检查与安装。
+- `modules/time.sh`：systemd 时间同步状态与启用操作。
+- `modules/swap.sh`：带输入验证、重复检测和失败清理的 Swap 创建。
 - `config/default.conf`：可提交的默认配置；本地覆盖使用 `config/local.conf`。
 - `tests/smoke.sh`：关键文件、Bash 语法与 ShellCheck 烟雾测试。
 
@@ -16,3 +19,4 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 3. 任何会修改系统状态的功能必须明确提示并单独实现。
 4. 运行日志与备份位于安装目录之外，卸载时默认保留。
 5. 当前支持目标为 Ubuntu 22.04、Ubuntu 24.04 和 Debian 12。
+6. 系统写操作必须要求 root 权限、明确确认并写入日志。

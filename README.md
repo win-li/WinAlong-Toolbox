@@ -2,12 +2,15 @@
 
 WinAlong Toolbox 是面向 Linux VPS 用户的中文命令行服务器工具箱。本项目当前专注于清晰、可维护的项目骨架和低风险的只读检查。
 
-## v0.1.0 功能
+## v0.2.0 功能
 
 - 循环主菜单与可返回的系统检查子菜单
 - 查看系统、内核、架构、内存和根分区信息
 - 查看 BBR 拥塞控制状态
 - 查看 Swap 状态
+- 检查并安装 Ubuntu/Debian 常规软件包更新
+- 查看并启用 systemd 时间同步
+- 创建可配置大小的 Swap 文件（默认 `/swapfile`、`2G`）
 - 自动识别 Linux 发行版
 - 统一消息输出与运行日志
 - 安装、卸载和烟雾测试脚本
@@ -36,6 +39,8 @@ sudo bash install.sh
 winalong
 ```
 
+只读检查可以直接运行 `winalong`。软件包更新、启用时间同步和创建 Swap 等写操作请使用 `sudo winalong`，并在菜单中再次确认。
+
 默认安装到 `/opt/winalong-toolbox`，并创建 `/usr/local/bin/winalong` 软链接。运行日志写入 `/var/log/winalong-toolbox`；普通用户无法写入该目录时，会回退到用户状态目录。
 
 ## 卸载
@@ -56,4 +61,4 @@ sudo bash /opt/winalong-toolbox/uninstall.sh
 
 ## 开发状态
 
-项目处于早期开发阶段（v0.1.0），请先在测试 VPS 验证，再用于重要环境。架构说明见 `docs/architecture.md`。
+所有系统写操作都要求 root 权限并二次确认。项目仍处于早期开发阶段（v0.2.0），请先在测试 VPS 验证，再用于重要环境。架构说明见 `docs/architecture.md`。
