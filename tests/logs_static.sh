@@ -15,7 +15,7 @@ if ! grep -Fq 'WAT_LOG_TAIL_LINES <= 500' "$LOGS_MODULE"; then
     printf '日志查看缺少最大行数限制。\n' >&2
     exit 1
 fi
-if ! grep -Fq 'wat_logs_container_name "$choice"' "$LOGS_MODULE"; then
+if ! grep -Fq "wat_logs_container_name \"\$choice\"" "$LOGS_MODULE"; then
     printf '容器日志没有使用固定白名单选择。\n' >&2
     exit 1
 fi
