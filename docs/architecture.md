@@ -17,8 +17,10 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `modules/network.sh`：原生网络诊断、限量测速及带回滚的 BBR/fq 管理。
 - `modules/update.sh`：通过 Git SSH 暂存远程版本，执行测试、快照、安装和失败回滚。
 - `modules/plugins.sh`：插件发现、权限校验、校验和展示、强确认与隔离执行。
+- `modules/doctor.sh`：只读健康指标、百分制评分、运行状态与改进建议。
 - `plugins/`：随项目发布的已审核插件；管理员插件保存在安装目录之外。
 - `config/update.conf`：更新仓库、分支、通道与管理员插件目录。
+- `config/doctor.conf`：健康体检阈值，不包含系统写操作。
 - `config/apps.conf`：应用镜像、容器、数据卷和本机端口的默认目录。
 - `config/default.conf`：可提交的默认配置；本地覆盖使用 `config/local.conf`。
 - `tests/smoke.sh`：关键文件、Bash 语法、ShellCheck 与模块静态测试入口。
@@ -45,3 +47,4 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 12. 网络诊断使用固定目标；BBR 只写独立 sysctl 文件，并在失败时恢复旧设置。
 13. 在线更新必须先验证语义化版本并运行远程版本测试；禁止自动降级，失败时恢复安装前快照。
 14. 插件不会自动加载；执行前必须验证 root 所有权、不可被非 root 写入、显示校验和并强确认。
+15. 健康体检只读取状态；可选 Docker 功能不参与评分，建议不得自动执行修复。

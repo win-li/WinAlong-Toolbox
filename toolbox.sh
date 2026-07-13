@@ -15,6 +15,8 @@ readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 . "${WAT_ROOT_DIR}/config/network.conf"
 # shellcheck source=config/update.conf
 . "${WAT_ROOT_DIR}/config/update.conf"
+# shellcheck source=config/doctor.conf
+. "${WAT_ROOT_DIR}/config/doctor.conf"
 if [[ -r ${WAT_ROOT_DIR}/config/local.conf ]]; then
     # shellcheck source=/dev/null
     . "${WAT_ROOT_DIR}/config/local.conf"
@@ -47,11 +49,29 @@ fi
 . "${WAT_ROOT_DIR}/modules/update.sh"
 # shellcheck source=modules/plugins.sh
 . "${WAT_ROOT_DIR}/modules/plugins.sh"
+# shellcheck source=modules/doctor.sh
+. "${WAT_ROOT_DIR}/modules/doctor.sh"
+
+wat_usage() {
+    printf '%s\n' "${WAT_PROJECT_NAME} v${WAT_VERSION}"
+    printf '%s\n' '用法：winalong [--doctor|--version|--help]'
+    printf '%s\n' '  --doctor   运行只读 VPS 健康体检'
+    printf '%s\n' '  --version  显示版本号'
+    printf '%s\n' '  --help     显示帮助'
+}
 
 wat_main() {
     local choice
     wat_log_init
     wat_log INFO "启动 ${WAT_PROJECT_NAME} v${WAT_VERSION}"
+
+    case "${1:-}" in
+        '') ;;
+        --doctor) wat_doctor_report; return 0 ;;
+        --version) printf '%s\n' "$WAT_VERSION"; return 0 ;;
+        --help|-h) wat_usage; return 0 ;;
+        *) wat_ui_error "未知参数：$1"; wat_usage >&2; return 2 ;;
+    esac
 
     while true; do
         wat_ui_title
@@ -65,6 +85,7 @@ wat_main() {
             '7. 网络诊断与 BBR' \
             '8. 在线更新' \
             '9. 插件中心' \
+            '10. VPS 健康体检' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -77,6 +98,7 @@ wat_main() {
             7) wat_network_menu ;;
             8) wat_update_menu ;;
             9) wat_plugins_menu ;;
+            10) wat_doctor_report; wat_pause ;;
             0)
                 wat_log INFO '正常退出'
                 wat_ui_success '已退出。'
