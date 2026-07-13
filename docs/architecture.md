@@ -14,6 +14,7 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `modules/apps.sh`：基于安全目录配置的 Docker 应用部署与生命周期管理。
 - `modules/backup.sh`：应用网络接入、数据卷一致性备份、校验、恢复与回滚。
 - `modules/security.sh`：只读安全审计、UFW 安全启用和 Fail2ban SSH 防护。
+- `modules/network.sh`：原生网络诊断、限量测速及带回滚的 BBR/fq 管理。
 - `config/apps.conf`：应用镜像、容器、数据卷和本机端口的默认目录。
 - `config/default.conf`：可提交的默认配置；本地覆盖使用 `config/local.conf`。
 - `tests/smoke.sh`：关键文件、Bash 语法、ShellCheck 与模块静态测试入口。
@@ -22,6 +23,7 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `tests/apps_static.sh`：验证应用目录只绑定回环地址、不使用 host 网络且不删除数据。
 - `tests/backup_static.sh`：验证恢复确认、挂载点清理范围及禁止删除 Docker 数据卷。
 - `tests/security_static.sh`：验证不修改 SSH、不重置防火墙、不硬编码开放端口及强确认短语。
+- `tests/network_static.sh`：验证不执行远程脚本、不修改路由并保护 BBR 写操作。
 
 ## 设计原则
 
@@ -36,3 +38,4 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 9. 应用模板必须使用明确镜像、命名数据卷和回环地址绑定；高风险网络应用单独评审。
 10. 恢复必须先校验归档并创建安全快照，数据清理只能发生在临时容器的 `/target` 卷挂载点。
 11. 防火墙启用前必须先允许检测到的 SSH 端口；安全模块不得修改 SSH 登录配置。
+12. 网络诊断使用固定目标；BBR 只写独立 sysctl 文件，并在失败时恢复旧设置。
