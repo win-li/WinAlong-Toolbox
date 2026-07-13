@@ -31,7 +31,7 @@ if ! grep -Fq 'sha256sum' "$PLUGIN_MODULE"; then
     printf '插件执行前未显示 SHA-256。\n' >&2
     exit 1
 fi
-if ! grep -Fq 'chown -R root:root "$WAT_INSTALL_DIR"' "$INSTALL_SCRIPT"; then
+if ! grep -Fq "chown -R root:root \"\$WAT_INSTALL_DIR\"" "$INSTALL_SCRIPT"; then
     printf '安装程序未确保内置插件和程序文件归 root 所有。\n' >&2
     exit 1
 fi

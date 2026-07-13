@@ -2,7 +2,7 @@
 
 WinAlong Toolbox 是面向 Linux VPS 用户的中文命令行服务器工具箱。本项目当前专注于清晰、可维护的项目骨架和低风险的只读检查。
 
-## v0.9.1 功能
+## v0.9.2 功能
 
 - 循环主菜单与可返回的系统检查子菜单
 - 查看系统、内核、架构、内存和根分区信息
@@ -82,7 +82,7 @@ sudo bash /opt/winalong-toolbox/uninstall.sh
 
 ## 开发状态
 
-所有系统写操作都要求 root 权限并二次确认。Portainer 需要挂载 Docker socket，因此拥有较高的服务器管理权限；默认不公开管理端口，也不启用 Edge Agent 的 8000 端口。Docker、Portainer 和应用中心不会自动将用户加入 `docker` 用户组。恢复会覆盖指定应用的数据卷，因此额外要求输入 `RESTORE`，并自动创建恢复前快照。启用 UFW 或 BBR 额外要求输入 `ENABLE`。项目仍处于早期开发阶段（v0.9.1），请先在测试 VPS 验证，再用于重要环境。架构说明见 `docs/architecture.md`。
+所有系统写操作都要求 root 权限并二次确认。Portainer 需要挂载 Docker socket，因此拥有较高的服务器管理权限；默认不公开管理端口，也不启用 Edge Agent 的 8000 端口。Docker、Portainer 和应用中心不会自动将用户加入 `docker` 用户组。恢复会覆盖指定应用的数据卷，因此额外要求输入 `RESTORE`，并自动创建恢复前快照。启用 UFW 或 BBR 额外要求输入 `ENABLE`。项目仍处于早期开发阶段（v0.9.2），请先在测试 VPS 验证，再用于重要环境。架构说明见 `docs/architecture.md`。
 
 ## 在线更新与插件
 
