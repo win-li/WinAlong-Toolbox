@@ -24,3 +24,4 @@ fi
 
 printf 'WinAlong Toolbox 已卸载。\n'
 printf '日志和备份已保留：%s，%s\n' "$WAT_LOG_DIR" "$WAT_BACKUP_DIR"
+printf '管理员插件目录已保留：%s\n' "${WAT_PLUGIN_DIR:-/etc/winalong-toolbox/plugins}"

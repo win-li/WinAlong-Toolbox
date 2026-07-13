@@ -6,11 +6,12 @@ required_files=(
     README.md CHANGELOG.md .gitignore .gitattributes toolbox.sh install.sh uninstall.sh
     lib/common.sh lib/ui.sh modules/system.sh modules/packages.sh modules/time.sh
     modules/swap.sh modules/docker.sh modules/portainer.sh modules/apps.sh modules/backup.sh
-    modules/security.sh modules/network.sh config/default.conf config/apps.conf
-    config/security.conf config/network.conf
+    modules/security.sh modules/network.sh modules/update.sh modules/plugins.sh
+    config/default.conf config/apps.conf config/security.conf config/network.conf config/update.conf
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
     tests/docker_static.sh tests/portainer_static.sh tests/apps_static.sh
     tests/backup_static.sh tests/security_static.sh tests/network_static.sh
+    tests/update_static.sh tests/plugins_static.sh update.sh plugins/system-summary.plugin.sh
 )
 
 failures=0
@@ -44,6 +45,12 @@ if ! bash "${PROJECT_DIR}/tests/security_static.sh"; then
     failures=$((failures + 1))
 fi
 if ! bash "${PROJECT_DIR}/tests/network_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/update_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/plugins_static.sh"; then
     failures=$((failures + 1))
 fi
 

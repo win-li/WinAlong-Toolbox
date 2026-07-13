@@ -13,6 +13,8 @@ readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 . "${WAT_ROOT_DIR}/config/security.conf"
 # shellcheck source=config/network.conf
 . "${WAT_ROOT_DIR}/config/network.conf"
+# shellcheck source=config/update.conf
+. "${WAT_ROOT_DIR}/config/update.conf"
 if [[ -r ${WAT_ROOT_DIR}/config/local.conf ]]; then
     # shellcheck source=/dev/null
     . "${WAT_ROOT_DIR}/config/local.conf"
@@ -41,6 +43,10 @@ fi
 . "${WAT_ROOT_DIR}/modules/security.sh"
 # shellcheck source=modules/network.sh
 . "${WAT_ROOT_DIR}/modules/network.sh"
+# shellcheck source=modules/update.sh
+. "${WAT_ROOT_DIR}/modules/update.sh"
+# shellcheck source=modules/plugins.sh
+. "${WAT_ROOT_DIR}/modules/plugins.sh"
 
 wat_main() {
     local choice
@@ -57,6 +63,8 @@ wat_main() {
             '5. 应用网络与备份' \
             '6. 安全中心' \
             '7. 网络诊断与 BBR' \
+            '8. 在线更新' \
+            '9. 插件中心' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -67,6 +75,8 @@ wat_main() {
             5) wat_backup_menu ;;
             6) wat_security_menu ;;
             7) wat_network_menu ;;
+            8) wat_update_menu ;;
+            9) wat_plugins_menu ;;
             0)
                 wat_log INFO '正常退出'
                 wat_ui_success '已退出。'
