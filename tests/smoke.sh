@@ -8,13 +8,16 @@ required_files=(
     lib/common.sh lib/ui.sh modules/system.sh modules/packages.sh modules/time.sh
     modules/swap.sh modules/docker.sh modules/portainer.sh modules/apps.sh modules/backup.sh
     modules/security.sh modules/network.sh modules/update.sh modules/plugins.sh modules/doctor.sh
+    modules/logs.sh modules/report.sh modules/scheduler.sh
     config/default.conf config/apps.conf config/security.conf config/network.conf config/update.conf
-    config/doctor.conf
+    config/doctor.conf config/maintenance.conf
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
     tests/docker_static.sh tests/portainer_static.sh tests/apps_static.sh
     tests/backup_static.sh tests/security_static.sh tests/network_static.sh
     tests/update_static.sh tests/plugins_static.sh tests/doctor_static.sh tests/maintenance_static.sh
+    tests/logs_static.sh tests/report_static.sh tests/scheduler_static.sh
     update.sh plugins/system-summary.plugin.sh docs/release.md docs/public-release.md
+    docs/diagnostics.md
     tests/public_static.sh
 )
 
@@ -66,6 +69,15 @@ fi
 if ! bash "${PROJECT_DIR}/tests/public_static.sh"; then
     failures=$((failures + 1))
 fi
+if ! bash "${PROJECT_DIR}/tests/logs_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/report_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/scheduler_static.sh"; then
+    failures=$((failures + 1))
+fi
 
 expected_version=$(awk -F'"' '$1 == "WAT_VERSION=" {print $2; exit}' \
     "${PROJECT_DIR}/config/default.conf")
@@ -82,6 +94,12 @@ if [[ $help_output != *'--maintenance'* ]]; then
     printf '命令行帮助缺少更新后维护状态入口。\n' >&2
     failures=$((failures + 1))
 fi
+for cli_entry in --report --backup-run --backup-schedule; do
+    if [[ $help_output != *"$cli_entry"* ]]; then
+        printf '命令行帮助缺少入口：%s\n' "$cli_entry" >&2
+        failures=$((failures + 1))
+    fi
+done
 
 if command -v shellcheck >/dev/null 2>&1; then
     mapfile -d '' scripts < <(find "$PROJECT_DIR" -type f -name '*.sh' -print0)

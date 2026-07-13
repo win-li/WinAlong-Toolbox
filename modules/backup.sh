@@ -32,7 +32,9 @@ wat_backup_snapshot() {
     backup_dir=$(wat_backup_app_dir)
     install -m 0700 -d "$backup_dir"
     archive="${app_id}-$(date '+%Y%m%d-%H%M%S')-${reason}-$$.tar.gz"
-    docker pull "$WAT_BACKUP_IMAGE" >/dev/null
+    if ! docker image inspect "$WAT_BACKUP_IMAGE" >/dev/null 2>&1; then
+        docker pull "$WAT_BACKUP_IMAGE" >/dev/null
+    fi
     if [[ $(docker container inspect --format '{{.State.Running}}' "$WAT_APP_CONTAINER") == 'true' ]]; then
         was_running='true'
         docker stop "$WAT_APP_CONTAINER" >/dev/null
@@ -70,6 +72,32 @@ wat_backup_create() {
         return 0
     fi
     wat_backup_snapshot "$app_id" manual
+}
+
+# Non-interactive entry point used only by the fixed systemd backup service.
+# Missing applications are skipped; deployed application failures are reported.
+wat_backup_run_all() {
+    local app_id failures=0 backed_up=0
+    wat_require_root || return 1
+    wat_apps_require_docker || return 1
+    for app_id in nginx uptime; do
+        wat_apps_select "$app_id" || continue
+        if ! wat_apps_exists; then
+            wat_log INFO "定时备份跳过未部署应用：${WAT_APP_NAME}"
+            continue
+        fi
+        if wat_backup_snapshot "$app_id" scheduled; then
+            backed_up=$((backed_up + 1))
+        else
+            failures=$((failures + 1))
+        fi
+    done
+    if ((failures > 0)); then
+        wat_log ERROR "定时备份完成但存在失败：${failures}"
+        return 1
+    fi
+    wat_log INFO "定时备份完成：${backed_up} 个应用"
+    wat_ui_success "备份任务完成：${backed_up} 个应用。"
 }
 
 wat_backup_list() {

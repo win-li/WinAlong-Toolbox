@@ -20,9 +20,13 @@ v1.2.0 新增 `bootstrap.sh` 作为可选的公开快速安装入口。它不包
 - `modules/update.sh`：默认通过 GitHub HTTPS 暂存远程版本，同时兼容私有 SSH 仓库覆盖，并执行测试、快照、安装和失败回滚。
 - `modules/plugins.sh`：插件发现、权限校验、校验和展示、强确认与隔离执行。
 - `modules/doctor.sh`：只读健康指标、百分制评分、运行状态与改进建议。
+- `modules/logs.sh`：限量运行日志、错误摘要、白名单容器日志与诊断菜单。
+- `modules/report.sh`：不读取敏感来源的 root 专用脱敏诊断报告。
+- `modules/scheduler.sh`：固定 systemd 单元、日历校验和明确确认保护的自动备份计划。
 - `plugins/`：随项目发布的已审核插件；管理员插件保存在安装目录之外。
 - `config/update.conf`：更新仓库、分支、通道与管理员插件目录。
 - `config/doctor.conf`：健康体检阈值，不包含系统写操作。
+- `config/maintenance.conf`：备份日历、固定单元名、日志行数和报告目录。
 - `config/apps.conf`：应用镜像、容器、数据卷和本机端口的默认目录。
 - `config/default.conf`：可提交的默认配置；本地覆盖使用 `config/local.conf`。
 - `tests/smoke.sh`：关键文件、Bash 语法、ShellCheck 与模块静态测试入口。
@@ -32,6 +36,9 @@ v1.2.0 新增 `bootstrap.sh` 作为可选的公开快速安装入口。它不包
 - `tests/backup_static.sh`：验证恢复确认、挂载点清理范围及禁止删除 Docker 数据卷。
 - `tests/security_static.sh`：验证不修改 SSH、不重置防火墙、不硬编码开放端口及强确认短语。
 - `tests/network_static.sh`：验证不执行远程脚本、不修改路由并保护 BBR 写操作。
+- `tests/logs_static.sh`：验证日志行数上限、容器白名单及禁止清空和无限跟随。
+- `tests/report_static.sh`：验证报告权限及禁止采集敏感系统来源。
+- `tests/scheduler_static.sh`：验证固定 systemd 单元、强确认、应用白名单及禁止删除备份。
 
 ## 设计原则
 

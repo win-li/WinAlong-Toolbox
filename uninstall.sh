@@ -9,6 +9,17 @@ SOURCE_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 
 wat_require_root
 
+# Remove only systemd units owned by this project. Runtime logs and backups remain.
+if wat_command_exists systemctl; then
+    systemctl disable --now winalong-backup.timer 2>/dev/null || true
+fi
+rm -f -- /etc/systemd/system/winalong-backup.timer \
+    /etc/systemd/system/winalong-backup.service
+if wat_command_exists systemctl; then
+    systemctl daemon-reload 2>/dev/null || true
+    systemctl reset-failed winalong-backup.service 2>/dev/null || true
+fi
+
 if [[ -L $WAT_BIN_LINK ]]; then
     link_target=$(readlink "$WAT_BIN_LINK")
     if [[ $link_target == "$WAT_INSTALL_DIR/toolbox.sh" ]]; then

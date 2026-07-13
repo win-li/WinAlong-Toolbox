@@ -1,4 +1,4 @@
-# v1.2.0 发布与验收
+# v1.3.0 发布与验收
 
 ## 支持范围
 
@@ -15,9 +15,19 @@ sudo bash install.sh
 winalong --version
 sudo winalong --doctor
 sudo winalong --maintenance
+sudo winalong --report
+sudo winalong --backup-schedule
 ```
 
 必须确认所有 Bash 文件通过 `bash -n`；测试机安装 ShellCheck 时必须零告警。在线更新、插件执行、UFW、Fail2ban、BBR、应用备份和恢复均应在独立测试 VPS 验证。
+
+v1.3.0 还必须验证：
+
+- 诊断报告目录为 `700`、文件为 `600`，内容不包含服务器 IP 或原始日志。
+- 自动备份 Timer 可重复启用且系统中只有一组同名单元。
+- `--backup-run` 能备份已部署应用并跳过未部署应用。
+- 停用 Timer 后已有 `.tar.gz` 备份保持不变。
+- 卸载时删除项目拥有的 Timer/Service，但保留报告、日志和备份。
 
 ## 当前验证记录
 

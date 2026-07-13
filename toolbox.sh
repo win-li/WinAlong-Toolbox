@@ -17,6 +17,8 @@ readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 . "${WAT_ROOT_DIR}/config/update.conf"
 # shellcheck source=config/doctor.conf
 . "${WAT_ROOT_DIR}/config/doctor.conf"
+# shellcheck source=config/maintenance.conf
+. "${WAT_ROOT_DIR}/config/maintenance.conf"
 if [[ -r ${WAT_ROOT_DIR}/config/local.conf ]]; then
     # shellcheck source=/dev/null
     . "${WAT_ROOT_DIR}/config/local.conf"
@@ -51,12 +53,21 @@ fi
 . "${WAT_ROOT_DIR}/modules/plugins.sh"
 # shellcheck source=modules/doctor.sh
 . "${WAT_ROOT_DIR}/modules/doctor.sh"
+# shellcheck source=modules/scheduler.sh
+. "${WAT_ROOT_DIR}/modules/scheduler.sh"
+# shellcheck source=modules/report.sh
+. "${WAT_ROOT_DIR}/modules/report.sh"
+# shellcheck source=modules/logs.sh
+. "${WAT_ROOT_DIR}/modules/logs.sh"
 
 wat_usage() {
     printf '%s\n' "${WAT_PROJECT_NAME} v${WAT_VERSION}"
-    printf '%s\n' '用法：winalong [--doctor|--maintenance|--version|--help]'
+    printf '%s\n' '用法：winalong [--doctor|--maintenance|--report|--backup-run|--backup-schedule|--version|--help]'
     printf '%s\n' '  --doctor   运行只读 VPS 健康体检'
     printf '%s\n' '  --maintenance  查看只读更新后维护状态'
+    printf '%s\n' '  --report   生成脱敏诊断报告（需要 root）'
+    printf '%s\n' '  --backup-run  立即执行已部署应用备份（需要 root）'
+    printf '%s\n' '  --backup-schedule  管理自动备份计划'
     printf '%s\n' '  --version  显示版本号'
     printf '%s\n' '  --help     显示帮助'
 }
@@ -70,6 +81,9 @@ wat_main() {
         '') ;;
         --doctor) wat_doctor_report; return 0 ;;
         --maintenance) wat_packages_maintenance_status; return 0 ;;
+        --report) wat_report_generate || return 1; return 0 ;;
+        --backup-run) wat_backup_run_all || return 1; return 0 ;;
+        --backup-schedule) wat_scheduler_menu; return 0 ;;
         --version) printf '%s\n' "$WAT_VERSION"; return 0 ;;
         --help|-h) wat_usage; return 0 ;;
         *) wat_ui_error "未知参数：$1"; wat_usage >&2; return 2 ;;
@@ -88,6 +102,7 @@ wat_main() {
             '8. 在线更新' \
             '9. 插件中心' \
             '10. VPS 健康体检' \
+            '11. 日志与诊断' \
             '0. 退出'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -101,6 +116,7 @@ wat_main() {
             8) wat_update_menu ;;
             9) wat_plugins_menu ;;
             10) wat_doctor_report; wat_pause ;;
+            11) wat_logs_menu ;;
             0)
                 wat_log INFO '正常退出'
                 wat_ui_success '已退出。'
