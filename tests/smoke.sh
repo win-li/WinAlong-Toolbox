@@ -80,7 +80,9 @@ fi
 if command -v shellcheck >/dev/null 2>&1; then
     mapfile -d '' scripts < <(find "$PROJECT_DIR" -type f -name '*.sh' -print0)
     printf 'shellcheck: %s 个脚本\n' "${#scripts[@]}"
-    if ! shellcheck -x "${scripts[@]}"; then
+    # ShellCheck resolves source= directives from its working directory.
+    # Always lint from the project root so this test works from any caller cwd.
+    if ! (cd "$PROJECT_DIR" && shellcheck -x "${scripts[@]}"); then
         failures=$((failures + 1))
     fi
 else
