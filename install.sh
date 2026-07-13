@@ -30,11 +30,14 @@ if [[ $SOURCE_DIR != "$WAT_INSTALL_DIR" ]]; then
     cp -a -- "${SOURCE_DIR}/config/update.conf" "$WAT_INSTALL_DIR/config/update.conf"
 fi
 
+# Installed code may run with root privileges, so it must not remain owned by
+# the account that cloned the source repository.
+chown -R root:root "$WAT_INSTALL_DIR"
 chmod +x "$WAT_INSTALL_DIR/toolbox.sh" "$WAT_INSTALL_DIR/install.sh" \
     "$WAT_INSTALL_DIR/uninstall.sh" "$WAT_INSTALL_DIR/update.sh"
 find "$WAT_INSTALL_DIR/lib" "$WAT_INSTALL_DIR/modules" -type f -name '*.sh' -exec chmod 0755 {} +
 find "$WAT_INSTALL_DIR/plugins" -type f -name '*.plugin.sh' -exec chmod 0644 {} +
-install -m 0755 -d /etc/winalong-toolbox/plugins
+install -o root -g root -m 0755 -d /etc/winalong-toolbox/plugins
 ln -sfn "$WAT_INSTALL_DIR/toolbox.sh" "$WAT_BIN_LINK"
 
 printf '安装完成。运行：%s\n' "$WAT_BIN_LINK"
