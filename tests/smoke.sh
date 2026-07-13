@@ -68,11 +68,12 @@ if [[ $(bash "${PROJECT_DIR}/toolbox.sh" --version) != "$expected_version" ]]; t
     printf '命令行版本输出与默认配置不一致。\n' >&2
     failures=$((failures + 1))
 fi
-if ! bash "${PROJECT_DIR}/toolbox.sh" --help | grep -Fq -- '--doctor'; then
+help_output=$(bash "${PROJECT_DIR}/toolbox.sh" --help)
+if [[ $help_output != *'--doctor'* ]]; then
     printf '命令行帮助缺少健康体检入口。\n' >&2
     failures=$((failures + 1))
 fi
-if ! bash "${PROJECT_DIR}/toolbox.sh" --help | grep -Fq -- '--maintenance'; then
+if [[ $help_output != *'--maintenance'* ]]; then
     printf '命令行帮助缺少更新后维护状态入口。\n' >&2
     failures=$((failures + 1))
 fi
