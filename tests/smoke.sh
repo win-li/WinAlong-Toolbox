@@ -3,7 +3,8 @@ set -Eeuo pipefail
 
 PROJECT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 required_files=(
-    README.md CHANGELOG.md .gitignore .gitattributes toolbox.sh install.sh uninstall.sh
+    README.md CHANGELOG.md LICENSE SECURITY.md CONTRIBUTING.md .gitignore .gitattributes
+    toolbox.sh install.sh uninstall.sh bootstrap.sh
     lib/common.sh lib/ui.sh modules/system.sh modules/packages.sh modules/time.sh
     modules/swap.sh modules/docker.sh modules/portainer.sh modules/apps.sh modules/backup.sh
     modules/security.sh modules/network.sh modules/update.sh modules/plugins.sh modules/doctor.sh
@@ -13,7 +14,8 @@ required_files=(
     tests/docker_static.sh tests/portainer_static.sh tests/apps_static.sh
     tests/backup_static.sh tests/security_static.sh tests/network_static.sh
     tests/update_static.sh tests/plugins_static.sh tests/doctor_static.sh tests/maintenance_static.sh
-    update.sh plugins/system-summary.plugin.sh docs/release.md
+    update.sh plugins/system-summary.plugin.sh docs/release.md docs/public-release.md
+    tests/public_static.sh
 )
 
 failures=0
@@ -59,6 +61,9 @@ if ! bash "${PROJECT_DIR}/tests/doctor_static.sh"; then
     failures=$((failures + 1))
 fi
 if ! bash "${PROJECT_DIR}/tests/maintenance_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/public_static.sh"; then
     failures=$((failures + 1))
 fi
 

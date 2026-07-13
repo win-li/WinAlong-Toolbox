@@ -5,6 +5,10 @@ wat_update_version_valid() {
     [[ $1 =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
 }
 
+wat_update_repo_uses_ssh() {
+    [[ $WAT_UPDATE_REPO == git@* || $WAT_UPDATE_REPO == ssh://* ]]
+}
+
 wat_update_stage() {
     local ssh_command='' sudo_home='' clone_failed='false'
     if ! wat_command_exists git; then
@@ -13,7 +17,7 @@ wat_update_stage() {
     fi
     WAT_UPDATE_TEMP_DIR=$(mktemp -d)
     export WAT_UPDATE_TEMP_DIR
-    if [[ ${EUID:-$(id -u)} -eq 0 && -n ${SUDO_USER:-} && $SUDO_USER != 'root' ]]; then
+    if wat_update_repo_uses_ssh && [[ ${EUID:-$(id -u)} -eq 0 && -n ${SUDO_USER:-} && $SUDO_USER != 'root' ]]; then
         if ! id "$SUDO_USER" >/dev/null 2>&1; then
             wat_ui_error 'SUDO_USER 无效，拒绝选择 SSH 密钥。'
             wat_update_cleanup
@@ -37,7 +41,7 @@ wat_update_stage() {
     if [[ ${clone_failed:-false} == 'true' ]]; then
         rm -rf -- "$WAT_UPDATE_TEMP_DIR"
         unset WAT_UPDATE_TEMP_DIR
-        wat_ui_error '无法通过 GitHub SSH 克隆更新仓库。'
+        wat_ui_error '无法克隆配置的更新仓库，请检查网络、仓库地址和访问权限。'
         return 1
     fi
     WAT_UPDATE_STAGE_DIR="${WAT_UPDATE_TEMP_DIR}/repo"

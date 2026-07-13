@@ -2,6 +2,8 @@
 
 WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 
+v1.2.0 新增 `bootstrap.sh` 作为可选的公开快速安装入口。它不包含业务逻辑，只负责校验 root 和依赖、通过 GitHub HTTPS 克隆临时副本、运行完整烟雾测试并调用 `install.sh`。在线更新仍由 `modules/update.sh` 独立处理，不执行远程管道脚本。
+
 - `toolbox.sh`：程序入口，仅加载配置、公共库和模块，并负责主菜单调度。
 - `lib/common.sh`：权限、交互确认、系统识别与日志等公共能力。
 - `lib/ui.sh`：统一的标题、菜单和消息输出。
@@ -15,7 +17,7 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `modules/backup.sh`：应用网络接入、数据卷一致性备份、校验、恢复与回滚。
 - `modules/security.sh`：只读安全审计、UFW 安全启用和 Fail2ban SSH 防护。
 - `modules/network.sh`：原生网络诊断、限量测速及带回滚的 BBR/fq 管理。
-- `modules/update.sh`：通过 Git SSH 暂存远程版本，执行测试、快照、安装和失败回滚。
+- `modules/update.sh`：默认通过 GitHub HTTPS 暂存远程版本，同时兼容私有 SSH 仓库覆盖，并执行测试、快照、安装和失败回滚。
 - `modules/plugins.sh`：插件发现、权限校验、校验和展示、强确认与隔离执行。
 - `modules/doctor.sh`：只读健康指标、百分制评分、运行状态与改进建议。
 - `plugins/`：随项目发布的已审核插件；管理员插件保存在安装目录之外。
