@@ -85,16 +85,35 @@ wat_doctor_check_time() {
 }
 
 wat_doctor_check_updates() {
-    local count=0
-    if wat_command_exists apt; then
-        count=$(apt list --upgradable 2>/dev/null | \
-            awk 'NR > 1 {count++} END {print count + 0}' || printf '0')
-    fi
-    if ((count <= WAT_DOCTOR_UPDATES_WARN_COUNT)); then
-        wat_doctor_result "待更新 ${count}" '正常' 10 10
+    local count kept_back kept_count
+    count=$(wat_packages_upgradable_count)
+    kept_back=$(wat_packages_kept_back)
+    kept_count=$(printf '%s\n' "$kept_back" | awk 'NF {count++} END {print count + 0}')
+    if ((kept_count > 0)); then
+        wat_doctor_result "更新 ${count}/暂缓 ${kept_count}" '注意' 2 5 \
+            '存在暂缓软件包；请先查看更新后维护状态，不要直接执行发行版升级。'
+    elif ((count == 0)); then
+        wat_doctor_result '待更新 0' '正常' 5 5
+    elif ((count <= WAT_DOCTOR_UPDATES_WARN_COUNT)); then
+        wat_doctor_result "待更新 ${count}" '注意' 4 5 \
+            '存在少量常规更新，可在备份后择机处理。'
     else
-        wat_doctor_result "待更新 ${count}" '注意' 5 10 \
+        wat_doctor_result "待更新 ${count}" '注意' 2 5 \
             '先备份重要数据，再通过系统管理安装软件包更新。'
+    fi
+}
+
+wat_doctor_check_reboot() {
+    local running_kernel latest_kernel
+    running_kernel=$(uname -r)
+    latest_kernel=$(wat_packages_latest_installed_kernel)
+    if [[ -e /var/run/reboot-required ]]; then
+        wat_doctor_result '需要重启' '注意' 0 5 '在维护窗口重启，并验证 SSH、Docker 和安全服务。'
+    elif [[ -n $latest_kernel && $running_kernel != "$latest_kernel" ]]; then
+        wat_doctor_result '内核待切换' '注意' 0 5 \
+            "当前 ${running_kernel}，最新已安装 ${latest_kernel}；建议维护窗口重启。"
+    else
+        wat_doctor_result '重启状态' '正常' 5 5
     fi
 }
 
@@ -183,6 +202,7 @@ wat_doctor_report() {
     wat_doctor_check_load
     wat_doctor_check_time
     wat_doctor_check_updates
+    wat_doctor_check_reboot
     wat_doctor_check_ufw
     wat_doctor_check_fail2ban
     wat_doctor_check_bbr

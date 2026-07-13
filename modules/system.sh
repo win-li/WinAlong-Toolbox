@@ -62,6 +62,7 @@ wat_system_menu() {
             '6. 查看时间同步状态' \
             '7. 启用时间同步' \
             '8. 创建 Swap' \
+            '9. 查看更新后维护状态' \
             '0. 返回主菜单'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -73,6 +74,7 @@ wat_system_menu() {
             6) wat_time_status || true; wat_pause ;;
             7) wat_time_enable_sync || true; wat_pause ;;
             8) wat_swap_create || true; wat_pause ;;
+            9) wat_packages_maintenance_status || true; wat_pause ;;
             0) return 0 ;;
             *) wat_ui_warn '无效选项，请重新输入。'; sleep 1 ;;
         esac

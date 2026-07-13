@@ -6,7 +6,7 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 - `lib/common.sh`：权限、交互确认、系统识别与日志等公共能力。
 - `lib/ui.sh`：统一的标题、菜单和消息输出。
 - `modules/system.sh`：系统信息、BBR、Swap 状态与系统管理菜单。
-- `modules/packages.sh`：Ubuntu/Debian 软件包更新检查与安装。
+- `modules/packages.sh`：Ubuntu/Debian 软件包更新、暂缓项、重启要求与内核状态检查。
 - `modules/time.sh`：systemd 时间同步状态与启用操作。
 - `modules/swap.sh`：带输入验证、重复检测和失败清理的 Swap 创建。
 - `modules/docker.sh`：Docker 官方仓库安装、服务控制与只读资源查询。
@@ -48,3 +48,4 @@ WinAlong Toolbox 采用小型、可组合的 Bash 模块架构。
 13. 在线更新必须先验证语义化版本并运行远程版本测试；禁止自动降级，失败时恢复安装前快照。
 14. 插件不会自动加载；执行前必须验证 root 所有权、不可被非 root 写入、显示校验和并强确认。
 15. 健康体检只读取状态；可选 Docker 功能不参与评分，建议不得自动执行修复。
+16. 维护状态只允许使用 APT 模拟模式检测暂缓项，不执行 `full-upgrade`、发行版升级或自动重启。

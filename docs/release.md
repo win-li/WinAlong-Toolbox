@@ -1,4 +1,4 @@
-# v1.0.0 发布与验收
+# v1.1.0 发布与验收
 
 ## 支持范围
 
@@ -14,6 +14,7 @@ bash tests/smoke.sh
 sudo bash install.sh
 winalong --version
 sudo winalong --doctor
+sudo winalong --maintenance
 ```
 
 必须确认所有 Bash 文件通过 `bash -n`；测试机安装 ShellCheck 时必须零告警。在线更新、插件执行、UFW、Fail2ban、BBR、应用备份和恢复均应在独立测试 VPS 验证。

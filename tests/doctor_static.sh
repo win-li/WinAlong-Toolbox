@@ -7,7 +7,7 @@ DOCTOR_MODULE="${PROJECT_DIR}/modules/doctor.sh"
 required_functions=(
     wat_doctor_reset wat_doctor_result wat_doctor_check_os wat_doctor_check_disk
     wat_doctor_check_memory wat_doctor_check_load wat_doctor_check_time
-    wat_doctor_check_updates wat_doctor_check_ufw wat_doctor_check_fail2ban
+    wat_doctor_check_updates wat_doctor_check_reboot wat_doctor_check_ufw wat_doctor_check_fail2ban
     wat_doctor_check_bbr wat_doctor_grade wat_doctor_runtime_summary wat_doctor_report
 )
 for function_name in "${required_functions[@]}"; do

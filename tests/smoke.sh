@@ -12,7 +12,7 @@ required_files=(
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
     tests/docker_static.sh tests/portainer_static.sh tests/apps_static.sh
     tests/backup_static.sh tests/security_static.sh tests/network_static.sh
-    tests/update_static.sh tests/plugins_static.sh tests/doctor_static.sh
+    tests/update_static.sh tests/plugins_static.sh tests/doctor_static.sh tests/maintenance_static.sh
     update.sh plugins/system-summary.plugin.sh docs/release.md
 )
 
@@ -58,6 +58,9 @@ fi
 if ! bash "${PROJECT_DIR}/tests/doctor_static.sh"; then
     failures=$((failures + 1))
 fi
+if ! bash "${PROJECT_DIR}/tests/maintenance_static.sh"; then
+    failures=$((failures + 1))
+fi
 
 expected_version=$(awk -F'"' '$1 == "WAT_VERSION=" {print $2; exit}' \
     "${PROJECT_DIR}/config/default.conf")
@@ -67,6 +70,10 @@ if [[ $(bash "${PROJECT_DIR}/toolbox.sh" --version) != "$expected_version" ]]; t
 fi
 if ! bash "${PROJECT_DIR}/toolbox.sh" --help | grep -Fq -- '--doctor'; then
     printf '命令行帮助缺少健康体检入口。\n' >&2
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/toolbox.sh" --help | grep -Fq -- '--maintenance'; then
+    printf '命令行帮助缺少更新后维护状态入口。\n' >&2
     failures=$((failures + 1))
 fi
 

@@ -54,8 +54,9 @@ fi
 
 wat_usage() {
     printf '%s\n' "${WAT_PROJECT_NAME} v${WAT_VERSION}"
-    printf '%s\n' '用法：winalong [--doctor|--version|--help]'
+    printf '%s\n' '用法：winalong [--doctor|--maintenance|--version|--help]'
     printf '%s\n' '  --doctor   运行只读 VPS 健康体检'
+    printf '%s\n' '  --maintenance  查看只读更新后维护状态'
     printf '%s\n' '  --version  显示版本号'
     printf '%s\n' '  --help     显示帮助'
 }
@@ -68,6 +69,7 @@ wat_main() {
     case "${1:-}" in
         '') ;;
         --doctor) wat_doctor_report; return 0 ;;
+        --maintenance) wat_packages_maintenance_status; return 0 ;;
         --version) printf '%s\n' "$WAT_VERSION"; return 0 ;;
         --help|-h) wat_usage; return 0 ;;
         *) wat_ui_error "未知参数：$1"; wat_usage >&2; return 2 ;;
