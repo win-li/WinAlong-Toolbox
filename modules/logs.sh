@@ -85,6 +85,7 @@ wat_logs_menu() {
             '4. 生成脱敏诊断报告' \
             '5. 查看最新诊断报告' \
             '6. 自动备份计划' \
+            '7. 生成脱敏支持包' \
             '0. 返回主菜单'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -94,6 +95,7 @@ wat_logs_menu() {
             4) wat_report_generate || true; wat_pause ;;
             5) wat_logs_latest_report || true; wat_pause ;;
             6) wat_scheduler_menu ;;
+            7) wat_support_bundle_create || true; wat_pause ;;
             0) return 0 ;;
             *) wat_ui_warn '无效选项，请重新输入。'; sleep 1 ;;
         esac

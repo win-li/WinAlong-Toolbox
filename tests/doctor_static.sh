@@ -9,6 +9,7 @@ required_functions=(
     wat_doctor_check_memory wat_doctor_check_load wat_doctor_check_time
     wat_doctor_check_updates wat_doctor_check_reboot wat_doctor_check_ufw wat_doctor_check_fail2ban
     wat_doctor_check_bbr wat_doctor_grade wat_doctor_runtime_summary wat_doctor_report
+    wat_doctor_check_backups
 )
 for function_name in "${required_functions[@]}"; do
     if ! grep -Eq "^${function_name}\\(\\)" "$DOCTOR_MODULE"; then
@@ -27,6 +28,10 @@ if ! grep -Fq '综合评分：%d/100' "$DOCTOR_MODULE"; then
 fi
 if ! grep -Fq 'Docker：未运行或未安装（不计入评分）' "$DOCTOR_MODULE"; then
     printf '健康体检错误地强制要求可选 Docker 功能。\n' >&2
+    exit 1
+fi
+if ! grep -Fq "wat_doctor_result '应用备份 未启用' '正常' 10 10" "$DOCTOR_MODULE"; then
+    printf '健康体检错误地惩罚未部署的可选应用。\n' >&2
     exit 1
 fi
 

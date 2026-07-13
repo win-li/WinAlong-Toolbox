@@ -30,6 +30,7 @@ if [[ $SOURCE_DIR != "$WAT_INSTALL_DIR" ]]; then
     cp -a -- "${SOURCE_DIR}/config/update.conf" "$WAT_INSTALL_DIR/config/update.conf"
     cp -a -- "${SOURCE_DIR}/config/doctor.conf" "$WAT_INSTALL_DIR/config/doctor.conf"
     cp -a -- "${SOURCE_DIR}/config/maintenance.conf" "$WAT_INSTALL_DIR/config/maintenance.conf"
+    cp -a -- "${SOURCE_DIR}/config/storage.conf" "$WAT_INSTALL_DIR/config/storage.conf"
 fi
 
 # Installed code may run with root privileges, so it must not remain owned by

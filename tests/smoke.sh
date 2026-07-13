@@ -9,15 +9,17 @@ required_files=(
     modules/swap.sh modules/docker.sh modules/portainer.sh modules/apps.sh modules/backup.sh
     modules/security.sh modules/network.sh modules/update.sh modules/plugins.sh modules/doctor.sh
     modules/logs.sh modules/report.sh modules/scheduler.sh
+    modules/storage.sh modules/config_snapshot.sh modules/support.sh
     config/default.conf config/apps.conf config/security.conf config/network.conf config/update.conf
-    config/doctor.conf config/maintenance.conf
+    config/doctor.conf config/maintenance.conf config/storage.conf
     logs/.gitkeep backup/.gitkeep docs/architecture.md tests/smoke.sh
     tests/docker_static.sh tests/portainer_static.sh tests/apps_static.sh
     tests/backup_static.sh tests/security_static.sh tests/network_static.sh
     tests/update_static.sh tests/plugins_static.sh tests/doctor_static.sh tests/maintenance_static.sh
     tests/logs_static.sh tests/report_static.sh tests/scheduler_static.sh
+    tests/storage_static.sh tests/config_snapshot_static.sh tests/support_static.sh
     update.sh plugins/system-summary.plugin.sh docs/release.md docs/public-release.md
-    docs/diagnostics.md
+    docs/diagnostics.md docs/backup-lifecycle.md
     tests/public_static.sh
 )
 
@@ -78,6 +80,15 @@ fi
 if ! bash "${PROJECT_DIR}/tests/scheduler_static.sh"; then
     failures=$((failures + 1))
 fi
+if ! bash "${PROJECT_DIR}/tests/storage_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/config_snapshot_static.sh"; then
+    failures=$((failures + 1))
+fi
+if ! bash "${PROJECT_DIR}/tests/support_static.sh"; then
+    failures=$((failures + 1))
+fi
 
 expected_version=$(awk -F'"' '$1 == "WAT_VERSION=" {print $2; exit}' \
     "${PROJECT_DIR}/config/default.conf")
@@ -94,7 +105,8 @@ if [[ $help_output != *'--maintenance'* ]]; then
     printf '命令行帮助缺少更新后维护状态入口。\n' >&2
     failures=$((failures + 1))
 fi
-for cli_entry in --report --backup-run --backup-schedule; do
+for cli_entry in --report --backup-run --backup-schedule --backup-health --backup-verify \
+    --config-snapshot --support-bundle; do
     if [[ $help_output != *"$cli_entry"* ]]; then
         printf '命令行帮助缺少入口：%s\n' "$cli_entry" >&2
         failures=$((failures + 1))

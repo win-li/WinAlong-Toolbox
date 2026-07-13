@@ -96,5 +96,7 @@ wat_report_generate() {
         return 1
     fi
     wat_log INFO "已生成脱敏诊断报告：${report_file}"
+    WAT_LAST_REPORT_PATH=$report_file
+    export WAT_LAST_REPORT_PATH
     wat_ui_success "诊断报告已生成：${report_file}"
 }

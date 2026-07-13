@@ -152,6 +152,46 @@ wat_doctor_check_bbr() {
     fi
 }
 
+wat_doctor_check_backups() {
+    local app_id deployed=0 healthy=0 stale=0 invalid=0 latest age_hours now
+    if ! wat_command_exists docker || ! docker info >/dev/null 2>&1; then
+        wat_doctor_result '应用备份 未启用' '正常' 10 10
+        return 0
+    fi
+    now=$(date +%s)
+    for app_id in nginx uptime; do
+        wat_apps_select "$app_id" || continue
+        wat_apps_exists || continue
+        deployed=$((deployed + 1))
+        latest=$(wat_storage_latest_archive "$app_id")
+        if [[ -z $latest ]]; then
+            invalid=$((invalid + 1))
+            continue
+        fi
+        if ! wat_storage_archive_valid "$latest"; then
+            invalid=$((invalid + 1))
+            continue
+        fi
+        age_hours=$(((now - $(stat -c '%Y' -- "$latest")) / 3600))
+        if ((age_hours > WAT_BACKUP_STALE_HOURS)); then
+            stale=$((stale + 1))
+        else
+            healthy=$((healthy + 1))
+        fi
+    done
+    if ((deployed == 0)); then
+        wat_doctor_result '应用备份 未启用' '正常' 10 10
+    elif ((invalid > 0)); then
+        wat_doctor_result "应用备份 ${healthy}/${deployed}" '警告' 0 10 \
+            '存在未备份或最新归档损坏的已部署应用；请运行 --backup-health 和 --backup-verify。'
+    elif ((stale > 0)); then
+        wat_doctor_result "应用备份 ${healthy}/${deployed}" '注意' 5 10 \
+            "存在超过 ${WAT_BACKUP_STALE_HOURS} 小时的备份；请检查自动备份计划。"
+    else
+        wat_doctor_result "应用备份 ${healthy}/${deployed}" '正常' 10 10
+    fi
+}
+
 wat_doctor_grade() {
     local score=$1
     if ((score >= 90)); then
@@ -206,6 +246,7 @@ wat_doctor_report() {
     wat_doctor_check_ufw
     wat_doctor_check_fail2ban
     wat_doctor_check_bbr
+    wat_doctor_check_backups
     final_score=$((WAT_DOCTOR_SCORE * 100 / WAT_DOCTOR_MAX_SCORE))
     grade=$(wat_doctor_grade "$final_score")
     printf '\n综合评分：%d/100（%s）\n' "$final_score" "$grade"

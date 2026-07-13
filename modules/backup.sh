@@ -31,6 +31,10 @@ wat_backup_snapshot() {
 
     backup_dir=$(wat_backup_app_dir)
     install -m 0700 -d "$backup_dir"
+    if ! wat_storage_backup_space_ok; then
+        wat_ui_error "备份磁盘可用空间低于 ${WAT_BACKUP_MIN_FREE_PERCENT}% 或无法读取，已拒绝创建新备份。"
+        return 1
+    fi
     archive="${app_id}-$(date '+%Y%m%d-%H%M%S')-${reason}-$$.tar.gz"
     if ! docker image inspect "$WAT_BACKUP_IMAGE" >/dev/null 2>&1; then
         docker pull "$WAT_BACKUP_IMAGE" >/dev/null
@@ -200,6 +204,11 @@ wat_backup_menu() {
             '5. 查看备份列表' \
             '6. 恢复 Nginx 最新备份' \
             '7. 恢复 Uptime Kuma 最新备份' \
+            '8. 查看备份健康状态' \
+            '9. 校验全部备份并生成 SHA-256 清单' \
+            '10. 预览备份保留清理' \
+            '11. 手动清理旧备份' \
+            '12. 创建托管配置快照' \
             '0. 返回主菜单'
         read -r -p '请输入菜单编号：' choice
         case "$choice" in
@@ -210,6 +219,11 @@ wat_backup_menu() {
             5) wat_backup_list || true; wat_pause ;;
             6) wat_backup_restore_latest nginx || true; wat_pause ;;
             7) wat_backup_restore_latest uptime || true; wat_pause ;;
+            8) wat_storage_health || true; wat_pause ;;
+            9) wat_storage_verify_all || true; wat_pause ;;
+            10) wat_storage_cleanup_preview || true; wat_pause ;;
+            11) wat_storage_cleanup_purge || true; wat_pause ;;
+            12) wat_config_snapshot_create || true; wat_pause ;;
             0) return 0 ;;
             *) wat_ui_warn '无效选项，请重新输入。'; sleep 1 ;;
         esac

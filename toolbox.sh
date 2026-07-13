@@ -19,6 +19,8 @@ readonly WAT_ENTRYPOINT WAT_ROOT_DIR
 . "${WAT_ROOT_DIR}/config/doctor.conf"
 # shellcheck source=config/maintenance.conf
 . "${WAT_ROOT_DIR}/config/maintenance.conf"
+# shellcheck source=config/storage.conf
+. "${WAT_ROOT_DIR}/config/storage.conf"
 if [[ -r ${WAT_ROOT_DIR}/config/local.conf ]]; then
     # shellcheck source=/dev/null
     . "${WAT_ROOT_DIR}/config/local.conf"
@@ -43,6 +45,8 @@ fi
 . "${WAT_ROOT_DIR}/modules/apps.sh"
 # shellcheck source=modules/backup.sh
 . "${WAT_ROOT_DIR}/modules/backup.sh"
+# shellcheck source=modules/storage.sh
+. "${WAT_ROOT_DIR}/modules/storage.sh"
 # shellcheck source=modules/security.sh
 . "${WAT_ROOT_DIR}/modules/security.sh"
 # shellcheck source=modules/network.sh
@@ -57,17 +61,25 @@ fi
 . "${WAT_ROOT_DIR}/modules/scheduler.sh"
 # shellcheck source=modules/report.sh
 . "${WAT_ROOT_DIR}/modules/report.sh"
+# shellcheck source=modules/config_snapshot.sh
+. "${WAT_ROOT_DIR}/modules/config_snapshot.sh"
+# shellcheck source=modules/support.sh
+. "${WAT_ROOT_DIR}/modules/support.sh"
 # shellcheck source=modules/logs.sh
 . "${WAT_ROOT_DIR}/modules/logs.sh"
 
 wat_usage() {
     printf '%s\n' "${WAT_PROJECT_NAME} v${WAT_VERSION}"
-    printf '%s\n' '用法：winalong [--doctor|--maintenance|--report|--backup-run|--backup-schedule|--version|--help]'
+    printf '%s\n' '用法：winalong [--doctor|--maintenance|--report|--backup-run|--backup-schedule|--backup-health|--backup-verify|--config-snapshot|--support-bundle|--version|--help]'
     printf '%s\n' '  --doctor   运行只读 VPS 健康体检'
     printf '%s\n' '  --maintenance  查看只读更新后维护状态'
     printf '%s\n' '  --report   生成脱敏诊断报告（需要 root）'
     printf '%s\n' '  --backup-run  立即执行已部署应用备份（需要 root）'
     printf '%s\n' '  --backup-schedule  管理自动备份计划'
+    printf '%s\n' '  --backup-health  查看备份健康与磁盘余量（需要 root）'
+    printf '%s\n' '  --backup-verify  校验全部标准备份并生成 SHA-256 清单（需要 root）'
+    printf '%s\n' '  --config-snapshot  创建固定允许清单的托管配置快照（需要 root）'
+    printf '%s\n' '  --support-bundle  生成脱敏诊断支持包（需要 root）'
     printf '%s\n' '  --version  显示版本号'
     printf '%s\n' '  --help     显示帮助'
 }
@@ -84,6 +96,10 @@ wat_main() {
         --report) wat_report_generate || return 1; return 0 ;;
         --backup-run) wat_backup_run_all || return 1; return 0 ;;
         --backup-schedule) wat_scheduler_menu; return 0 ;;
+        --backup-health) wat_storage_health || return 1; return 0 ;;
+        --backup-verify) wat_storage_verify_all || return 1; return 0 ;;
+        --config-snapshot) wat_config_snapshot_create || return 1; return 0 ;;
+        --support-bundle) wat_support_bundle_create || return 1; return 0 ;;
         --version) printf '%s\n' "$WAT_VERSION"; return 0 ;;
         --help|-h) wat_usage; return 0 ;;
         *) wat_ui_error "未知参数：$1"; wat_usage >&2; return 2 ;;
