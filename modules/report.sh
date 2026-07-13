@@ -2,10 +2,11 @@
 set -Eeuo pipefail
 
 wat_report_package_counts() {
-    local upgradable held
-    upgradable=$(apt list --upgradable 2>/dev/null | awk 'NR > 1 {count++} END {print count+0}')
-    held=$(apt-mark showhold 2>/dev/null | awk 'NF {count++} END {print count+0}')
-    printf '可升级软件包：%s\n暂缓软件包：%s\n' "$upgradable" "$held"
+    local upgradable kept_back kept_count
+    upgradable=$(wat_packages_upgradable_count)
+    kept_back=$(wat_packages_kept_back)
+    kept_count=$(printf '%s\n' "$kept_back" | awk 'NF {count++} END {print count+0}')
+    printf '可升级软件包：%s\n暂缓软件包：%s\n' "$upgradable" "$kept_count"
 }
 
 wat_report_docker_status() {

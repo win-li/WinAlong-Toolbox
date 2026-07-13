@@ -16,6 +16,11 @@ if ! grep -Fq 'install -o root -g root -m 0600' "$REPORT_MODULE"; then
     printf '诊断报告没有强制使用 0600 权限。\n' >&2
     exit 1
 fi
+if ! grep -Fq 'wat_packages_upgradable_count' "$REPORT_MODULE" || \
+    ! grep -Fq 'wat_packages_kept_back' "$REPORT_MODULE"; then
+    printf '诊断报告没有复用维护模块的软件包统计逻辑。\n' >&2
+    exit 1
+fi
 if grep -Eq '(^|[[:space:]])(env|printenv|hostname|ifconfig)([[:space:]]|$)|ip[[:space:]]+(addr|address)|/etc/(shadow|ssh)|\.env' \
     "$REPORT_MODULE"; then
     printf '诊断报告包含禁止采集的敏感来源。\n' >&2
